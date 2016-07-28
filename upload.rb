@@ -2,7 +2,11 @@
 
 std_trap = trap("INT"){exit! 130} # no backtrace thanks
 
-$: << Dir.pwd # no require_relatives
+
+# Assumes that the script is run from a symlink in PATH called upload
+# Just change line below to the directory of repository for simplicity
+
+$: << `dirname $(readlink $(which upload))`.chomp # no require_relatives
 
 require 'tty.rb'
 require 'episode.rb'
