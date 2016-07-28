@@ -2,6 +2,8 @@
 
 std_trap = trap("INT"){exit! 130} # no backtrace thanks
 
+$: << Dir.pwd # no require_relatives
+
 require 'tty.rb'
 require 'episode.rb'
 require 'medialibrary.rb'

@@ -1,5 +1,6 @@
+
 require 'shellwords'
-require 'net/sftp'
+require 'net/sftp' rescue odie "net-sftp gem is required"
 require 'extend/file'
 require 'tty.rb'
 require 'timeout'
@@ -93,7 +94,7 @@ class Server
       try = 0
       begin
         host = HOSTS[try]
-        timeout(TIMEOUT){@server = SSHWrapper.new user: 'dovi', host: host}
+        Timeout.timeout(TIMEOUT){@server = SSHWrapper.new user: 'dovi', host: host}
         
       rescue Timeout::Error
         #UploadLog.log.error "Unable to establish connection to #{HOSTS[try]}"
