@@ -9,43 +9,26 @@ std_trap = trap("INT"){exit! 130} # no backtrace thanks
 $: << `dirname $(readlink $(which upload))`.chomp # no require_relatives
 
 require 'tty.rb'
-require 'episode.rb'
-require 'medialibrary.rb'
-require 'sshwrapper.rb'
+require 'upload_handler.rb'
+require 'getoptlong'
 
-MEDIA_PATHS = [
-  "/media/green/tv",
-  "/media/pink/tv",
-  "/media/black/tv",
-  "/media/pink/Anime"
-]
+opts = GetoptLong.new(
+  [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
+  [ '--dir', '-n', GetoptLong::REQUIRED_ARGUMENT ]
+)
 
-begin
-  raise ArgumentError, "Expecting one filename for upload" unless ARGV.size == 1
-  file = ARGV.first
-  ep = Episode.new file
-rescue ArgumentError => e
-  odie e.message
+dir = false
+opts.each do |opt, arg|
+  case opt
+  when '--dir'
+    dir=true
+  end
 end
 
-begin
-  Server.load
-rescue SSHWrapper::ERRCONN => e
-  odie e.message
-end
-
-begin
-  library = MediaLibrary.new(MEDIA_PATHS)
-  # library.view
-  library.search(ep)
-  trap("INT", std_trap) # restore default CTRL-C handler, for the upload
-  Server.s.upload ep.file, ep.upload_path
-rescue MediaLibrary::ShowNotFoundError, MediaLibrary::SeasonNotFoundError
-  odie "#{ep.upload_path} was not found in the library"
-rescue MediaLibrary::EpisodeDuplicateError
-  odie "#{ep} is already in the library"
-rescue ArgumentError => e
-  odie e.message
-rescue Interrupt
-  puts "Cancelling..."
+if dir
+  Dir.glob("**/*mkv").each {|file| upload(file)}
+else
+  odie "Expecting one filename for upload" unless ARGV.size == 1
+  file = ARGV.shift
+  upload(file)
 end
