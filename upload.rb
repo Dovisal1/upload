@@ -27,7 +27,7 @@ opts.each do |opt, arg|
 end
 
 if dir
-  Dir.glob("**/*mkv").each {|file| upload(file)}
+  Dir.glob("**/*{mkv,mp4,avi}").each {|file| upload(file)}
 else
   odie "Expecting one filename for upload" unless ARGV.size == 1
   file = ARGV.shift
