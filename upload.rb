@@ -7,6 +7,7 @@ std_trap = trap("INT"){exit! 130} # no backtrace thanks
 # Just change line below to the directory of repository for simplicity
 
 $: << `dirname $(readlink $(which upload))`.chomp # no require_relatives
+$:.delete("/Users/dovisalomon/Documents/ComputerStuff/ruby/")
 
 require 'tty.rb'
 require 'upload_handler.rb'
@@ -14,14 +15,14 @@ require 'getoptlong'
 
 opts = GetoptLong.new(
   [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
-  [ '--dir', '-n', GetoptLong::REQUIRED_ARGUMENT ]
+  [ '--dir', GetoptLong::NO_ARGUMENT ]
 )
 
 dir = false
 opts.each do |opt, arg|
   case opt
   when '--dir'
-    dir=true
+    dir = true
   end
 end
 

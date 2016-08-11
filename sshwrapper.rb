@@ -1,7 +1,7 @@
 
 require 'shellwords'
 require 'net/sftp' rescue odie "net-sftp gem is required"
-require 'extend/file'
+require 'extend/file.rb'
 require 'tty.rb'
 require 'timeout'
 
@@ -18,14 +18,9 @@ class SSHWrapper
       "A user and hostname are required to establish a connection"
     end
     
-    @conn = Net::SFTP.start(@host, @user)
-    #UploadLog.log.debug "Establish connection to #{@user}@#{@host}"
+    @conn = Net::SFTP.start @host, @user
   end
-  
-  def exec cmd
-    ls cmd
-  end
-  
+
   def upload file, destpath
     uploadhandler file, destpath
   end
@@ -33,12 +28,11 @@ class SSHWrapper
   def uploadhandler file, destpath
     ohai("Uploading")
     system "scp #{escape file} #{user}@#{host}:#{escape destpath}"
-    #UploadLog.log.debug "#{file} upload to #{destpath}"
   end
   
   def uploadhandler2 file, destpath
     
-    #  Nice idea but too slow
+    #  Nice idea, but Net::SFTP is too slow
     
     require 'ruby-progressbar'
     require 'filesize'
@@ -94,17 +88,12 @@ class Server
       try = 0
       begin
         host = HOSTS[try]
-        Timeout.timeout(TIMEOUT){@server = SSHWrapper.new user: 'dovi', host: host}
-        
+        Timeout.timeout(TIMEOUT){@server = SSHWrapper.new user: 'dovi', host: host} 
       rescue Timeout::Error
-        #UploadLog.log.error "Unable to establish connection to #{HOSTS[try]}"
-        
         try += 1
         if try == HOSTS.size
-          #UploadLog.log.fatal "Unable to establish connection to any server"
           raise SSHWrapper::ERRCONN, "Could not connect to the server"
         end
-        
         retry
       end
     end
