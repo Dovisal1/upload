@@ -4,32 +4,25 @@ std_trap = trap("INT"){exit! 130} # no backtrace thanks
 
 
 # Assumes that the script is run from a symlink in PATH called upload
-# Just change line below to the directory of repository for simplicity
+# Can change line below to the directory of repository for simplicity
 
 $: << `dirname $(readlink $(which upload))`.chomp # no require_relatives
 $:.delete("/Users/dovisalomon/Documents/ComputerStuff/ruby/")
 
 require 'tty.rb'
 require 'upload_handler.rb'
-require 'getoptlong'
+require 'medialibrary.rb'
+require 'sshwrapper.rb'
 
-opts = GetoptLong.new(
-  [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
-  [ '--dir', GetoptLong::NO_ARGUMENT ]
-)
-
-dir = false
-opts.each do |opt, arg|
-  case opt
-  when '--dir'
-    dir = true
-  end
+begin
+  Server.load
+rescue SSHWrapper::ERRCONN => e
+  odie e.message
 end
 
-if dir
-  Dir.glob("**/*{mkv,mp4,avi}").each {|file| upload(file)}
+case ARGV.size
+when 0
+  Dir.glob("**/*{mkv,mp4,avi}").each{|file| upload(file)}
 else
-  odie "Expecting one filename for upload" unless ARGV.size == 1
-  file = ARGV.shift
-  upload(file)
+  ARGV.each{|file| upload(file)}
 end

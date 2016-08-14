@@ -1,60 +1,61 @@
 
 require 'shellwords'
-require 'net/sftp' rescue odie "net-sftp gem is required"
+require 'net/sftp'
 require 'extend/file.rb'
 require 'tty.rb'
 require 'timeout'
 
 class SSHWrapper
-  
+
   attr_reader :user, :host
-  
+
   def initialize args
     @user = args[:user]
     @host = args[:host]
-    
+
     unless @user and @host
       raise ArgumentError,
       "A user and hostname are required to establish a connection"
     end
-    
+
     @conn = Net::SFTP.start @host, @user
   end
 
   def upload file, destpath
     uploadhandler file, destpath
   end
-  
+
   def uploadhandler file, destpath
     ohai("Uploading")
+
     system "scp #{escape file} #{user}@#{host}:#{escape destpath}"
   end
-  
+
   def uploadhandler2 file, destpath
-    
+
     #  Nice idea, but Net::SFTP is too slow
-    
+
     require 'ruby-progressbar'
     require 'filesize'
-    
+
     if @conn.file.directory?(destpath)
       destpath = File.join(destpath, File.basename(file) )
     end
-    
+
     handler = ProgressHandler.new
     @conn.upload!(file, destpath, progress: handler)
-  
+
   rescue Interrupt
       # If download is interrupted we want to
       # remove the partially downloaded file
       handler.log "Cancelling..."
       @conn.remove!(destpath)
   end
-  
+
   def entries path
     @conn.dir.entries(path).map{|e|e.name}
   end
-  
+
   def ls *dir
     case dir.size
     when 0
@@ -63,32 +64,32 @@ class SSHWrapper
       entries(File.path_from_root *dir)
     end
   end
-  
+
   alias run exec
   alias e exec
-  
+
   private
-  
+
   def escape(txt)
     Shellwords.escape(txt)
   end
-  
+
   class ERRCONN < StandardError
   end
-  
+
 end
 
 class Server
-  
-  HOSTS = ['doviserver', 'dovi.ddns.net'] # hosts to try, in order of precedence
+
+  HOSTS = ['192.168.1.46', 'dovi.ddns.net'] # hosts to try, in order of precedence
   TIMEOUT = 5
-  
+
   def self.s
     if @server.nil?
       try = 0
       begin
         host = HOSTS[try]
-        Timeout.timeout(TIMEOUT){@server = SSHWrapper.new user: 'dovi', host: host} 
+        Timeout.timeout(TIMEOUT){@server = SSHWrapper.new user: 'dovi', host: host}
       rescue Timeout::Error
         try += 1
         if try == HOSTS.size
@@ -99,11 +100,11 @@ class Server
     end
     @server
   end
-  
+
   def self.load
     if Server.s then true else false end
   end
-  
+
 end
 
 
@@ -117,11 +118,11 @@ class ProgressHandler
       "#{File.basename file.remote} #{Filesize.from("#{file.size} B").pretty}")
     start_progress(file.remote, file.size)
   end
-  
+
   def on_put(uploader, file, offset, data)
     @progbar.progress += data.length
   end
-  
+
   def start_progress(remotefile, filesize)
     @progbar = ProgressBar.create(
       #title: remotefile,
@@ -132,9 +133,8 @@ class ProgressHandler
       smoothing: 0.75
     )
   end
-  
+
   def log str
     @progbar.log str
   end
 end
-  
