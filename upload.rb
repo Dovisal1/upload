@@ -2,7 +2,6 @@
 
 std_trap = trap("INT"){exit! 130} # no backtrace thanks
 
-
 # Assumes that the script is run from a symlink in PATH called upload
 # Can change line below to the directory of repository for simplicity
 
@@ -13,12 +12,6 @@ require 'tty.rb'
 require 'upload_handler.rb'
 require 'medialibrary.rb'
 require 'sshwrapper.rb'
-
-begin
-  Server.load
-rescue SSHWrapper::ERRCONN => e
-  odie e.message
-end
 
 case ARGV.size
 when 0

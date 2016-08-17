@@ -11,6 +11,13 @@ def upload(file)
     odie e.message
   end
 
+  # No need to load server unless actually uploading
+  begin
+    Server.load
+  rescue SSHWrapper::ERRCONN => e
+    odie e.message
+  end
+
   begin
     MediaLibrary::Lib.l.search(ep)
     Server.s.upload ep.file, ep.upload_path

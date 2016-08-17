@@ -96,6 +96,7 @@ class MediaLibrary
     end
   end
 
+  # The lib class serves as a global wrapper for the media library
   class Lib
 
     MEDIA_PATHS = [
