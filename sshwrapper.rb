@@ -83,13 +83,14 @@ class Server
 
   HOSTS = ['192.168.1.46', 'dovi.ddns.net'] # hosts to try, in order of precedence
   TIMEOUT = 5
+  USER = 'dovi' # This should be from a config file
 
   def self.s
     if @server.nil?
       try = 0
       begin
         host = HOSTS[try]
-        Timeout.timeout(TIMEOUT){@server = SSHWrapper.new user: 'dovi', host: host}
+        Timeout.timeout(TIMEOUT){@server = SSHWrapper.new user: USER, host: host}
       rescue Timeout::Error
         try += 1
         if try == HOSTS.size
@@ -102,7 +103,12 @@ class Server
   end
 
   def self.load
-    if Server.s then true else false end
+    if @server.nil?
+      print "Connecting..."
+      Server.s
+      puts "done"
+    end
+    @server
   end
 
 end

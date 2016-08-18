@@ -8,10 +8,7 @@ std_trap = trap("INT"){exit! 130} # no backtrace thanks
 $: << `dirname $(readlink $(which upload))`.chomp # no require_relatives
 $:.delete("/Users/dovisalomon/Documents/ComputerStuff/ruby/")
 
-require 'tty.rb'
 require 'upload_handler.rb'
-require 'medialibrary.rb'
-require 'sshwrapper.rb'
 
 case ARGV.size
 when 0

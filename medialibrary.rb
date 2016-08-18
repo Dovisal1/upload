@@ -108,7 +108,9 @@ class MediaLibrary
 
     def self.l
       if @lib.nil?
+        print "Loading library..."
         @lib = MediaLibrary.new(MEDIA_PATHS)
+        puts "done"
       end
       @lib
     end
