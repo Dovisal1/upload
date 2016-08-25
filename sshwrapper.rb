@@ -4,6 +4,7 @@ require 'net/sftp'
 require 'extend/file.rb'
 require 'tty.rb'
 require 'timeout'
+require 'resolv'
 
 class SSHWrapper
 
@@ -26,8 +27,7 @@ class SSHWrapper
   end
 
   def uploadhandler file, destpath
-    ohai("Uploading")
-
+    ohai("Uploading", destpath)
     system "scp #{escape file} #{user}@#{host}:#{escape destpath}"
   end
 
@@ -81,7 +81,7 @@ end
 
 class Server
 
-  HOSTS = ['192.168.1.46', 'dovi.ddns.net'] # hosts to try, in order of precedence
+  HOSTS = ['doviserver', 'dovi.ddns.net'] # hosts to try, in order of precedence
   TIMEOUT = 5
   USER = 'dovi' # This should be from a config file
 
@@ -90,8 +90,11 @@ class Server
       try = 0
       begin
         host = HOSTS[try]
-        Timeout.timeout(TIMEOUT){@server = SSHWrapper.new user: USER, host: host}
+        print "Trying #{Resolv.getaddress host}..."
+        Timeout::timeout(TIMEOUT){@server = SSHWrapper.new user: USER, host: host}
+        puts "done"
       rescue Timeout::Error
+        puts "failed"
         try += 1
         if try == HOSTS.size
           raise SSHWrapper::ERRCONN, "Could not connect to the server"
@@ -104,9 +107,7 @@ class Server
 
   def self.load
     if @server.nil?
-      print "Connecting..."
       Server.s
-      puts "done"
     end
     @server
   end

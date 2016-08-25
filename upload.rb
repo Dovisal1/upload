@@ -10,9 +10,11 @@ $:.delete("/Users/dovisalomon/Documents/ComputerStuff/ruby/")
 
 require 'upload_handler.rb'
 
+DEF_DIR = File.join(Dir.home, "Torrents")
+
 case ARGV.size
 when 0
-  Dir.glob("**/*{mkv,mp4,avi}").each{|file| upload(file)}
+  Dir.glob(File.join DEF_DIR, "**/*{mkv,mp4,avi}") {|file| upload(file)}
 else
   ARGV.each{|file| upload(file)}
 end
