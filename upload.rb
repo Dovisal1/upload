@@ -16,5 +16,11 @@ case ARGV.size
 when 0
   Dir.glob(File.join DEF_DIR, "**/*{mkv,mp4,avi}") {|file| upload(file)}
 else
-  ARGV.each{|file| upload(file)}
+  ARGV.each do |file|
+    if File.directory? file
+      Dir.glob("#{file}/**/*{mkv,mp4,avi}") {|file| upload(file)}
+    else
+      upload(file)
+    end
+  end
 end
