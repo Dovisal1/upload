@@ -11,16 +11,22 @@ $:.delete("/Users/dovisalomon/Documents/ComputerStuff/ruby/")
 require 'upload_handler.rb'
 
 DEF_DIR = File.join(Dir.home, "Torrents")
+EXTENSIONS = ['mkv', 'mp4', 'avi']
 
 case ARGV.size
 when 0
-  Dir.glob(File.join DEF_DIR, "**/*{mkv,mp4,avi}") {|file| upload(file)}
+  Dir.glob(File.join DEF_DIR, "**/*{#{EXTENSIONS.join(",")}}") {|file| upload(file)}
 else
-  ARGV.each do |file|
-    if File.directory? file
-      Dir.glob("#{file}/**/*{mkv,mp4,avi}") {|file| upload(file)}
+  ARGV.each do |arg|
+    if File.directory? arg
+      # For some odd reason I must change directories
+      # I can't glob directly
+      savedir = Dir.getwd
+      Dir.chdir arg
+      Dir.glob("**/*{#{EXTENSIONS.join(",")}}") {|file| upload(file)}
+      Dir.chdir savedir
     else
-      upload(file)
+      upload(arg)
     end
   end
 end
