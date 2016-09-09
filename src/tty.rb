@@ -1,4 +1,6 @@
 
+# This code is 'stolen' from homebrew package manager for osx :)
+
 class Tty
   class << self
     def tick
