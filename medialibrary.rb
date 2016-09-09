@@ -85,7 +85,7 @@ class MediaLibrary
       episodes.delete_if{|s| Episode::VIDEO_EXTS.include? s[/\w\w\w$/] }
     end
 
-    if episodes.map{|s| s[/(?<=[ex])\d+/i].to_i}.include? e.episode_i
+    if episodes.map{|s| s[/(?<=[ex])\d+/i].to_i }.include? e.episode_i
       raise EpisodeDuplicateError
     end
   end

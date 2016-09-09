@@ -11,7 +11,7 @@ $:.delete("/Users/dovisalomon/Documents/ComputerStuff/ruby/")
 require 'upload_handler.rb'
 
 DEF_DIR = File.join(Dir.home, "Torrents")
-EXTENSIONS = ['mkv', 'mp4', 'avi']
+EXTENSIONS = ['mkv', 'mp4', 'avi', "srt"]
 
 case ARGV.size
 when 0

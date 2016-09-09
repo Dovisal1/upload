@@ -6,8 +6,11 @@ class Episode
   SUBTITLE_EXTS = ['srt', 'sub', 'ass']
   VIDEO_EXTS = ['mp4', 'mkv', 'avi']
   VALID_EXTS = VIDEO_EXTS + SUBTITLE_EXTS
-  REGEX = /(?<show>.+?)s(?<season>\d\d)[\Wx]*e(?<episode>\d+).*?\.(?<ext>\w\w\w)$/i
-  ALTREGEX = /(?<show>.+?)\.(?<season>\d+)x(?<episode>\d+)\..*?\.(?<ext>\w\w\w)$/i
+  REGEX = [
+    /(?<show>.+?)s(?<season>\d\d)[\Wx]*e(?<episode>\d+).*?\.(?<ext>\w\w\w)$/i,
+    /(?<show>.+?)\.(?<season>\d+)x(?<episode>\d+)\..*?\.(?<ext>\w\w\w)$/i,
+    /(?<show>.+?)\.(?<season>\d)(?<episode>\d\d)\..*?\.(?<ext>\w\w\w)$/i
+  ]
   
   attr_accessor :show, :ext, :filename, :media_path, :file
   
@@ -48,15 +51,19 @@ class Episode
   private
   
   def extract
-    REGEX =~ @filename
-    
-    if $~.nil?
-      ALTREGEX =~ @filename
-      if $~.nil?
+
+    regex = REGEX.dup
+
+    loop do
+      re = regex.shift
+      if re.nil?
+      	# We have used up all regex
         raise ArgumentError, "Filename must follow pattern: <showname>S##E##.<ext>"
       end
+      re =~ @filename
+      break unless $~.nil?
     end
-    
+
     #Extracting data from the pattern
     @show = $~[:show]
     @season = $~[:season]
