@@ -1,4 +1,5 @@
 
+require 'highline/import'
 require 'shellwords'
 require 'net/sftp'
 require 'extend/file.rb'
