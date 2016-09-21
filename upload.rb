@@ -21,10 +21,10 @@ else
     if File.directory? arg
       # For some odd reason I must change directories
       # I can't glob directly
-      savedir = Dir.getwd
+      dir = Dir.getwd
       Dir.chdir arg
       Dir.glob("**/*{#{EXTENSIONS.join(",")}}") {|file| upload(file)}
-      Dir.chdir savedir
+      Dir.chdir dir
     else
       upload(arg)
     end
