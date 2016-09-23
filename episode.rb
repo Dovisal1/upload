@@ -1,7 +1,9 @@
 
-require 'extend/file.rb'
+# require 'extend/file.rb'
 
 class Episode
+
+  include Comparable
   
   SUBTITLE_EXTS = ['srt', 'sub', 'ass']
   VIDEO_EXTS = ['mp4', 'mkv', 'avi']
@@ -12,12 +14,21 @@ class Episode
     /(?<show>.+?)\.(?<season>\d)(?<episode>\d\d)\..*?\.(?<ext>\w\w\w)$/i
   ]
   
-  attr_accessor :show, :ext, :filename, :media_path, :file
+  attr_accessor :show, :episode, :ext, :filename, :media_path, :file
   
   def initialize file
     @file = file
     @filename = File.basename file
     extract()
+  end
+
+  def <=>(other)
+    return nil unless other.instance_of? Episode
+
+    show_compare = self.show <=> other.show
+    episode_compare = self.episode_i <=> other.episode_i
+
+    show_compare == 0 ? episode_compare : show_compare
   end
   
   def upload_path
@@ -26,6 +37,10 @@ class Episode
   
   def to_s
     "#{show} <S#{season_s}E#{episode_s}>"
+  end
+
+  def show
+    @show.capitalize
   end
   
   def season_i
