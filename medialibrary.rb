@@ -39,6 +39,8 @@ class MediaPath
     x.include?(y) or y.include?(x)
   end
 
+  private
+
   def trim show
     show.delete('-').downcase.strip_prefix('the')
   end
