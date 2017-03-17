@@ -38,10 +38,6 @@ class Episode
   def to_s
     "#{show} <S#{season_s}E#{episode_s}>"
   end
-
-  def show
-    @show.capitalize
-  end
   
   def season_i
     @season.to_i
