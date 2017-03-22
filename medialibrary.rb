@@ -104,7 +104,6 @@ class MediaLibrary
     MEDIA_PATHS = [
       "/media/green/tv",
       "/media/pink/tv",
-      "/media/black/tv",
       "/media/pink/Anime"
     ]
 
