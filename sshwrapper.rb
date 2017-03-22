@@ -64,6 +64,10 @@ class SSHWrapper
     else
       entries(File.path_from_root *dir)
     end
+  rescue Net::SFTP::StatusException
+    #if directory was not found
+    #for now, simply return empty
+    return []
   end
 
   alias run exec
