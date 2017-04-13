@@ -1,6 +1,7 @@
-require 'sshwrapper.rb'
-require 'episode.rb'
-require 'extend/string.rb'
+
+require_relative 'sshwrapper.rb'
+require_relative 'episode.rb'
+require_relative 'extend/string.rb'
 
 class MediaPath
 

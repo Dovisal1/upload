@@ -1,5 +1,5 @@
 
-# require 'extend/file.rb'
+require_relative 'extend/file.rb'
 
 class Episode
 

@@ -1,8 +1,8 @@
 
-require 'medialibrary.rb'
-require 'episode.rb'
-require 'sshwrapper.rb'
-require 'tty.rb'
+require_relative 'medialibrary.rb'
+require_relative 'episode.rb'
+require_relative 'sshwrapper.rb'
+require_relative 'tty.rb'
 
 def upload(file)
   ep = Episode.new file

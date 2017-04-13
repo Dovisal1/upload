@@ -2,13 +2,7 @@
 
 std_trap = trap("INT"){exit! 130} # no backtrace thanks
 
-# Assumes that the script is run from a symlink in PATH called upload
-# Can change line below to the directory of repository for simplicity
-
-$: << `dirname $(readlink $(which upload))`.chomp # no require_relatives
-$:.delete("/Users/dovisalomon/Documents/ComputerStuff/ruby/")
-
-require 'upload_handler.rb'
+require_relative 'upload_handler.rb'
 
 DEF_DIR = File.join(Dir.home, "Torrents")
 EXTENSIONS = ['mkv', 'mp4', 'avi', "srt"]

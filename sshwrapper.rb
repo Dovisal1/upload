@@ -2,10 +2,10 @@
 require 'highline/import'
 require 'shellwords'
 require 'net/sftp'
-require 'extend/file.rb'
-require 'tty.rb'
 require 'timeout'
 require 'resolv'
+require_relative 'extend/file.rb'
+require_relative 'tty.rb'
 
 class SSHWrapper
 
